@@ -138,7 +138,7 @@ def _(event):
 
 
 MODEL = "gpt-oss:120b-cloud"
-VER = "cli v17"  # bump on any UI/behaviour change so stale sessions are obvious
+VER = "cli v18"  # bump on any UI/behaviour change so stale sessions are obvious
 CWD = os.path.basename(os.getcwd()) or os.getcwd()
 CTX = 12
 THEMES = ["default"]
