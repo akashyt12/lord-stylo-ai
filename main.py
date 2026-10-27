@@ -138,7 +138,7 @@ def _(event):
 
 
 MODEL = "gpt-oss:120b-cloud"
-VER = "cli v15"  # bump on any UI/behaviour change so stale sessions are obvious
+VER = "cli v16"  # bump on any UI/behaviour change so stale sessions are obvious
 CWD = os.path.basename(os.getcwd()) or os.getcwd()
 CTX = 12
 THEMES = ["default"]
@@ -484,11 +484,17 @@ class TurnUI:
     def tool(self, name, args):
         self._stop_spin()
         self.flush()
+        if name == "edit_file":
+            return          # its result renders as a diff box (emit_diff)
         tool_box(name, _tool_detail(name, args))
 
     def result(self, name, out):
+        diff, out = _split_diff(out)
+        if diff:
+            emit_diff(diff)
         lines, ok = _tool_result_lines(out)
-        tool_result(name, lines, ok)
+        if lines != ["(empty)"] or not ok:
+            tool_result(name, lines, ok)
 
     def finish(self):
         self._stop_spin()
@@ -603,6 +609,78 @@ def tool_result(name, lines, ok=True):
         t.append("  ⎿ " if i == 0 else "    ", style=DIM)
         t.append(ln, style=color)
     emit(t)
+
+
+# ---------- diff editor view (edit_file / write_file) ----------
+_DIFF_RE = re.compile(r"\[DIFF\]\n?(.*?)\n?\[/DIFF\]", re.S)
+_DIFF_MAX = 140
+
+
+def _split_diff(out):
+    """out with a [DIFF]..[/DIFF] block -> (diff_text or None, rest)."""
+    m = _DIFF_RE.search(str(out or ""))
+    if not m:
+        return None, out
+    rest = (str(out or "")[: m.start()] + str(out or "")[m.end() :]).strip()
+    return m.group(1), rest
+
+
+def emit_diff(diff):
+    """Line-numbered red/- green/+ diff box (opencode style)."""
+    base = ""
+    rows, old_no, new_no, shown, extra = [], 0, 0, 0, 0
+    for raw in diff.splitlines():
+        line = raw.rstrip("\n")
+        if line.startswith("---"):
+            continue
+        if line.startswith("+++"):
+            base = line[4:].strip()
+            continue
+        if line.startswith("@@"):
+            m = re.search(r"@@ -(\d+)", line)
+            old_no = int(m.group(1)) if m else 0
+            m = re.search(r" \+(\d+)", line)
+            new_no = int(m.group(1)) if m else 0
+            if shown < _DIFF_MAX:
+                rows.append(Text(f"      {line}", style="italic grey42"))
+                shown += 1
+            else:
+                extra += 1
+            continue
+        if shown >= _DIFF_MAX:
+            extra += 1
+            continue
+        sign = line[0] if line[:1] else " "
+        body = line[1:].rstrip()
+        if sign == "-":
+            rows.append(
+                Text(f"{old_no:<4} {sign} {body}", style="#fecaca on #4a1d1d")
+            )
+            old_no += 1
+        elif sign == "+":
+            rows.append(
+                Text(f"{new_no:<4} {sign} {body}", style="#bbf7d0 on #14432a")
+            )
+            new_no += 1
+        else:
+            rows.append(Text(f"{old_no:<4}   {body}", style="grey45"))
+            old_no += 1
+            new_no += 1
+        shown += 1
+    if not rows:
+        return
+    if extra:
+        rows.append(Text(f"      ... (+{extra} lines)", style="grey42"))
+    name = os.path.basename(base) or base or "file"
+    emit(Text(f"  ← Edit {name}", style=DIM))
+    emit(
+        Panel(
+            Group(*rows),
+            border_style="#3a3a3a",
+            padding=(0, 1),
+            expand=True,
+        )
+    )
 
 
 # ---------- commands ----------

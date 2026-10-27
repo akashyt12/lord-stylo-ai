@@ -1,6 +1,7 @@
 """AI agent: tool definitions + the think -> tool -> answer loop."""
 
 import base64
+import difflib
 import fnmatch
 import json
 import os
@@ -1421,6 +1422,13 @@ def _py_verdict(path, src):
 
 
 def tool_write_file(path, content):
+    old = None
+    if os.path.isfile(path):
+        try:
+            with open(path, "r", encoding="utf-8", newline="") as fh:
+                old = fh.read()
+        except Exception:
+            old = None
     try:
         parent = os.path.dirname(os.path.abspath(path))
         if parent:
@@ -1429,9 +1437,21 @@ def tool_write_file(path, content):
             fh.write(content or "")
     except Exception as exc:
         return f"error: {exc}"
+    diff = ""
+    if old is not None and old != (content or ""):
+        diff = "".join(
+            difflib.unified_diff(
+                old.splitlines(True),
+                (content or "").splitlines(True),
+                fromfile=path,
+                tofile=path,
+                n=3,
+            )
+        )
     n = (content or "").count("\n") + 1
     return (
-        f"wrote {path} ({len(content or '')} bytes, ~{n} lines)"
+        (f"[DIFF]\n{diff}[/DIFF]\n" if diff else "")
+        + f"wrote {path} ({len(content or '')} bytes, ~{n} lines)"
         + _py_verdict(path, content or "")
     )
 
@@ -1449,6 +1469,7 @@ def tool_edit_file(path, old_str, new_str, replace_all=False):
     count = src.count(old_str)
     if not replace_all and count > 1:
         return f"error: old_str matches {count} times; pass replace_all=true"
+    before = src
     src = src.replace(old_str, new_str) if replace_all else src.replace(
         old_str, new_str, 1
     )
@@ -1457,8 +1478,20 @@ def tool_edit_file(path, old_str, new_str, replace_all=False):
             fh.write(src)
     except Exception as exc:
         return f"error: {exc}"
+    diff = ""
+    if before != src:
+        diff = "".join(
+            difflib.unified_diff(
+                before.splitlines(True),
+                src.splitlines(True),
+                fromfile=path,
+                tofile=path,
+                n=3,
+            )
+        )
     return (
-        f"edited {path} ({count if replace_all else 1} replacement(s))"
+        (f"[DIFF]\n{diff}[/DIFF]\n" if diff else "")
+        + f"edited {path} ({count if replace_all else 1} replacement(s))"
         + _py_verdict(path, src)
     )
 
