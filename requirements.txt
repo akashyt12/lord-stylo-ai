@@ -1,0 +1,4 @@
+rich>=14
+prompt_toolkit>=3.0
+requests>=2.34
+pillow>=10

@@ -1,0 +1,7 @@
+{
+  "keys": [],
+  "model": "gpt-oss:120b-cloud",
+  "vision_model": "gemma4:31b-cloud",
+  "gemini_key": "",
+  "gemini_vision_model": "gemini-3.5-flash"
+}

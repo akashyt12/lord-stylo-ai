@@ -1,0 +1,18 @@
+# This workspace folder holds many unrelated projects — ship ONLY the CLI.
+/*
+!/main.py
+!/agent.py
+!/ollama_client.py
+!/requirements.txt
+!/README.md
+!/keys.example.json
+!/.gitignore
+
+# never commit user secrets/state (even if the rules above change)
+keys.json
+.memory.md
+.session.json
+*.session.json.tmp
+__pycache__/
+*.pyc
+_t*.py
