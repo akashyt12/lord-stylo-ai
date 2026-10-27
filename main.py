@@ -929,8 +929,9 @@ def first_run_setup(force=False):
                 emit(Text(f"  ✗ {why}", style=ERR_C))
                 continue
             emit(Text(f"  ✓ {why}", style=OK_C))
-            if raw not in keys:
-                keys.append(raw)
+            key = raw                  # verified key -> becomes owner key
+            if key not in keys:
+                keys.append(key)
             break
 
         gem = _ask_line("[bold]Gemini key (optional)[/]", allow_empty=True) or ""
