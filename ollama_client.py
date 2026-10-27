@@ -96,8 +96,12 @@ def load_config():
     except Exception:
         cfg = {}
     keys = cfg.get("keys") or list(_FALLBACK_KEYS)
+    owner = cfg.get("owner_keys")
+    if not owner:
+        owner = [keys[0]] if keys else []     # first key = owner key
     return {
         "keys": keys,
+        "owner_keys": list(owner),
         "model": cfg.get("model") or DEFAULT_MODEL,
         "vision_model": cfg.get("vision_model") or VISION_MODEL,
         "gemini_key": cfg.get("gemini_key") or "",

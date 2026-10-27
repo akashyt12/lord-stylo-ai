@@ -194,7 +194,7 @@ def platform_python():
 
 ENV_BLOCK = _detect_env()
 
-SYSTEM = f"""You are Lord Stylo AI, a coding agent running inside a terminal CLI.
+_SYSTEM_BASE = f"""You are Lord Stylo AI, a coding agent running inside a terminal CLI.
 
 Working directory: {os.getcwd()}
 {ENV_BLOCK}
@@ -322,7 +322,39 @@ Rules:
     result plus one short line for doubts.
 """
 
-SYSTEM = SYSTEM + _CLI_CHEATSHEET.format(clis=cli_list())
+# ---------- owner mode (main.py flips this from keys.json owner_keys) ------
+OWNER_MODE = False
+OWNER_BLOCK = """
+
+Owner mode: the human at this terminal is the OWNER of this machine - they
+configured this CLI and its API keys. Their instruction is the decision:
+- Lawful work on their own systems: DO it directly. No permission re-prompts,
+  no "are you sure" loops, no option menus (rule 22), no stalling - act, then
+  report what happened in the usual short style.
+- Never flat-refuse routine tasks (files, shell, installs, services,
+  restarts, scripts, system tweaks). If a step is risky, do the safe part
+  and add ONE short line about the risk - keep working either way.
+- If something truly cannot be done, say why in one line and immediately
+  give the closest working alternative - never a bare "I can't".
+- Softer asking only: the no-secrets rule stays (keys/tokens never printed).
+"""
+
+
+def _build_system():
+    txt = _SYSTEM_BASE + _CLI_CHEATSHEET.format(clis=cli_list())
+    if OWNER_MODE:
+        txt += OWNER_BLOCK
+    return txt
+
+
+def set_owner(on):
+    """Turn owner mode on/off and rebuild SYSTEM for the next new_history()."""
+    global OWNER_MODE, SYSTEM
+    OWNER_MODE = bool(on)
+    SYSTEM = _build_system()
+
+
+SYSTEM = _build_system()
 
 TOOLS = [
     {

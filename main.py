@@ -138,7 +138,7 @@ def _(event):
 
 
 MODEL = "gpt-oss:120b-cloud"
-VER = "cli v11"  # bump on any UI/behaviour change so stale sessions are obvious
+VER = "cli v12"  # bump on any UI/behaviour change so stale sessions are obvious
 CWD = os.path.basename(os.getcwd()) or os.getcwd()
 CTX = 12
 THEMES = ["default"]
@@ -753,6 +753,7 @@ def do_command(c):
             f"history    {max(0, len(CONVO) - 1)} messages "
             f"(auto-compact at {agent_mod.COMPACT_AT}% ctx)",
             f"session    .session.json auto save/restore ON",
+            f"owner      {'ON - owner key active' if agent_mod.OWNER_MODE else 'OFF'}",
             f"memory     {len(agent_mod.load_memory())} chars in .memory.md "
             f"({agent_mod.pinned_count()} pinned)",
             f"tools      {len(agent_mod._PAR_STATS)} parallel batches run",
@@ -944,7 +945,13 @@ def first_run_setup(force=False):
         emit(Text(f"setup failed: {exc}", style=ERR_C))
         return False
 
-    save_config({"keys": keys, **({"gemini_key": gem} if gem else {})})
+    save_config(
+        {
+            "keys": keys,
+            "owner_keys": [key],          # the pasted key = owner key
+            **({"gemini_key": gem} if gem else {}),
+        }
+    )
 
     # "restart": drop the old client and boot the UI fresh with new keys
     global CLIENT, MODEL
@@ -957,12 +964,22 @@ def first_run_setup(force=False):
     return True
 
 
+def apply_owner():
+    """owner_keys (from wizard / keys.json) -> agent owner mode."""
+    cfg = load_config()
+    keys = set(cfg.get("keys") or [])
+    owner = [k for k in (cfg.get("owner_keys") or []) if k in keys]
+    agent_mod.set_owner(bool(owner))
+    return bool(owner)
+
+
 def main():
     global CTX, CONVO
     if os.name == "nt":
         os.system("")
-    CONVO = agent_mod.new_history()
     first_run_setup()               # no key yet? popup -> key -> auto start
+    apply_owner()                   # pasted key -> owner mode
+    CONVO = agent_mod.new_history()
     get_client()
     atexit.register(_save_session)     # auto-save on any exit
     header()
