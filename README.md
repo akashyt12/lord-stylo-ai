@@ -1,14 +1,14 @@
-# Claude Code CLI
+# Lord Stylo AI
 
-A Claude Code style AI agent that runs in your terminal — streaming replies,
-real tool execution (shell, files, background servers, deploys), auto memory
+An AI agent that runs in your terminal — streaming replies, real tool
+execution (shell, files, background servers, deploys), auto memory
 compaction, session restore, image reading and **free model APIs**.
 
 Works on **Windows, Termux (Android), Linux** — anything with Python 3.9+.
 
 ```
 ┌──────────────────────────────────────────────┐
-│  ◆ Claude Code   gpt-oss:120b-cloud          │
+│  ◆ Lord Stylo AI   gpt-oss:120b-cloud        │
 │  cwd: my-project  ·  type /help              │
 ├──────────────────────────────────────────────┤
 │  > make a folder and put hello.txt in it     │
@@ -24,8 +24,8 @@ Works on **Windows, Termux (Android), Linux** — anything with Python 3.9+.
 ### Windows
 
 ```powershell
-git clone https://github.com/akashyt12/claude-code-cli.git
-cd claude-code-cli
+git clone https://github.com/akashyt12/lord-stylo-ai.git
+cd lord-stylo-ai
 pip install -r requirements.txt
 py main.py
 ```
@@ -34,8 +34,8 @@ py main.py
 
 ```bash
 pkg update && pkg install python git
-git clone https://github.com/akashyt12/claude-code-cli.git
-cd claude-code-cli
+git clone https://github.com/akashyt12/lord-stylo-ai.git
+cd lord-stylo-ai
 pip install -r requirements.txt
 python main.py
 ```
@@ -43,8 +43,8 @@ python main.py
 ### Linux / macOS
 
 ```bash
-git clone https://github.com/akashyt12/claude-code-cli.git
-cd claude-code-cli
+git clone https://github.com/akashyt12/lord-stylo-ai.git
+cd lord-stylo-ai
 python3 -m pip install -r requirements.txt
 python3 main.py
 ```

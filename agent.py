@@ -194,7 +194,7 @@ def platform_python():
 
 ENV_BLOCK = _detect_env()
 
-SYSTEM = f"""You are Claude Code, a coding agent running inside a terminal CLI.
+SYSTEM = f"""You are Lord Stylo AI, a coding agent running inside a terminal CLI.
 
 Working directory: {os.getcwd()}
 {ENV_BLOCK}
@@ -1932,7 +1932,7 @@ def tool_download(url, dest):
 
     try:
         os.makedirs(os.path.dirname(os.path.abspath(dest)) or ".", exist_ok=True)
-        req = urllib.request.Request(url, headers={"User-Agent": "claude-cli/1.0"})
+        req = urllib.request.Request(url, headers={"User-Agent": "lord-stylo-ai/1.0"})
         with urllib.request.urlopen(req, timeout=60) as resp, open(dest, "wb") as fh:
             total = 0
             while True:

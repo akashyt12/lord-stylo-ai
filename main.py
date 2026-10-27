@@ -1,4 +1,4 @@
-"""Claude Code style CLI: Ollama backed agent with real tools."""
+"""Lord Stylo AI: Ollama backed terminal agent with real tools."""
 
 import atexit
 import io
@@ -138,7 +138,7 @@ def _(event):
 
 
 MODEL = "gpt-oss:120b-cloud"
-VER = "cli v10"  # bump on any UI/behaviour change so stale sessions are obvious
+VER = "cli v11"  # bump on any UI/behaviour change so stale sessions are obvious
 CWD = os.path.basename(os.getcwd()) or os.getcwd()
 CTX = 12
 THEMES = ["default"]
@@ -225,7 +225,7 @@ def header():
                 Align.center(
                     Group(
                         Text.from_markup(
-                            f"  [bold #d97757]◆ Claude Code[/]   "
+                            f"  [bold #d97757]◆ Lord Stylo AI[/]   "
                             f"[{DIM}]{MODEL}[/]"
                         ),
                         Text.from_markup(
@@ -292,7 +292,7 @@ def tool_box(name, detail, body=""):
 def _reply_title():
     t = Text()
     t.append("✳ ", style=CORAL)
-    t.append("Claude", style="bold white")
+    t.append("Lord Stylo AI", style="bold white")
     t.append("  ", style="")
     t.append(MODEL, style="dim")
     return t
@@ -897,7 +897,7 @@ def first_run_setup(force=False):
 
     panel = Panel(
         Text.from_markup(
-            "[bold]Welcome to Claude Code CLI![/]\n\n"
+            "[bold]Welcome to Lord Stylo AI![/]\n\n"
             "No API key found — let's add your free key first.\n\n"
             "  1.  open  [bold cyan]https://ollama.com/settings/keys[/]\n"
             "  2.  press [bold]Create Key[/] and copy it\n"
