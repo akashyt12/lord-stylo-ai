@@ -36,7 +36,7 @@ py main.py
 pkg update && pkg install python git
 git clone https://github.com/akashyt12/lord-stylo-ai.git
 cd lord-stylo-ai
-pip install -r requirements.txt
+pip install -r requirements.txt   # 3 small pure-python packages, fast
 python main.py
 ```
 
@@ -47,6 +47,15 @@ git clone https://github.com/akashyt12/lord-stylo-ai.git
 cd lord-stylo-ai
 python3 -m pip install -r requirements.txt
 python3 main.py
+```
+
+### Optional: image resize (pillow)
+
+`pillow` is a large package (slow to build on phones) and **not required** —
+the CLI and `/image` work without it, images are just sent unresized:
+
+```bash
+pip install -r requirements-vision.txt    # run later, when on fast net
 ```
 
 ## First run = key setup (popup)
@@ -90,7 +99,7 @@ works).
 - **Free models** — `gpt-oss:120b-cloud`, `gpt-oss:20b-cloud`,
   `gemma4:31b-cloud`, `nemotron-3-super` (Ollama free plan) + key rotation
 - **Image reading** — free Gemini (`gemini-3.5-flash`) first, Ollama `gemma4`
-  fallback, auto-downscaled via Pillow
+  fallback; auto-resize via optional Pillow (works without it too)
 - **Memory** — auto-compact at 60% context, `.memory.md` summaries,
   `/pin` facts that never get compacted away
 - **Session restore** — conversation auto-saved to `.session.json`,
