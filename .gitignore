@@ -4,6 +4,7 @@
 !/agent.py
 !/ollama_client.py
 !/requirements.txt
+!/requirements-vision.txt
 !/README.md
 !/keys.example.json
 !/.gitignore

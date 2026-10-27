@@ -1,0 +1,3 @@
+# Optional, heavy (image resize for /image + read_image).
+# CLI works fine without it - vision falls back to sending the original file.
+pillow>=10
